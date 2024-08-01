@@ -1,31 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import mockDataCSV from '../data/mockdata.csv'; // Import the CSV file
 
-function SearchResults() {
-    const location = useLocation();
-    const { data: locationData } = location.state || { data: [] };
-
-    const [searchQuery, setSearchQuery] = useState('');
-    const [data, setData] = useState(locationData);
+const SearchResults = () => {
+    const [data, setData] = useState([]);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        if (locationData.length === 0) {
-            // Parse the CSV file
-            Papa.parse(mockDataCSV, {
-                download: true,
-                header: true,
-                complete: (result) => {
-                    setData(result.data);
-                },
-                error: (err) => {
-                    setError(err.message);
-                },
-            });
-        }
-    }, [locationData]);
+        Papa.parse(mockDataCSV, {
+            download: true,
+            header: true,
+            complete: (result) => {
+                setData(result.data);
+            },
+            error: (err) => {
+                setError(err.message);
+            },
+        });
+    }, []);
 
     const filteredData = data.filter(item => 
         (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -49,7 +43,9 @@ function SearchResults() {
             />
             <ul>
                 {filteredData.map(item => (
-                    <li key={item.id}>{item.name}</li>
+                    <li key={item.id}>
+                        <Link to={`/company/${item.id}`}>{item.name}</Link>
+                    </li>
                 ))}
             </ul>
         </div>
