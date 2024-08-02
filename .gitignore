@@ -27,5 +27,3 @@ yarn-error.log*
 /backend/convertedData
 /backend/files
 /src/data/data.json
-
-src/data/data.json

@@ -9,7 +9,7 @@ const CompanyDetail = () => {
   const [siren, setSiren] = useState('');
 
   useEffect(() => {
-    fetch('/src/data/data.json')
+    fetch(`data/siren/${EntrepriseNumber}`)
       .then(response => response.json())
       .then(data => {
         const companyData = data["0200.065.765"]; // Replace with the appropriate key
@@ -19,9 +19,9 @@ const CompanyDetail = () => {
       .catch(error => console.error('Error fetching company data:', error));
   }, []);
 
-  // if (!company) {
-  //   return <div>Loading...</div>;
-  // }
+  if (!company) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Layout>
