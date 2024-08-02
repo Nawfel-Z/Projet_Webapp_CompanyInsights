@@ -28,3 +28,4 @@ yarn-error.log*
 /backend/files
 /src/data/data.json
 
+src/data/data.json
