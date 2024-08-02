@@ -21,7 +21,7 @@ function Home() {
                     </Text>
                     <Space direction="vertical" size="large" style={{ marginTop: '20px' }}>
                         <Input.Search
-                            placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..."
+                            placeholder="Entreprise, N° SIREN"
                             enterButton="Rechercher"
                             size="large"
                             onSearch={(value) => console.log(value)}
