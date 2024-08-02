@@ -31,7 +31,7 @@ const convertToJSON = async () => {
         console.log('Starting CSV to JSON conversion...');
 
         console.log('Loading filtered codes...');
-        const filteredCodeData = await readCsvWithLimit(filteredCodePath, 100000); // No limit needed here
+        const filteredCodeData = await readCsvWithLimit(filteredCodePath, 1000000); // No limit needed here
 
         // Create a map for activity descriptions
         const activityMap = new Map();
@@ -43,7 +43,7 @@ const convertToJSON = async () => {
         console.log('Filtered codes loaded.');
 
         console.log('Processing combined data...');
-        const combinedData = await readCsvWithLimit(combinedPath, 1000); // Limit to 1000 rows
+        const combinedData = await readCsvWithLimit(combinedPath, 500000); // Limit to 1000 rows
         const jsonData = {};
 
         combinedData.forEach(item => {
@@ -61,6 +61,8 @@ const convertToJSON = async () => {
                     activity: {},
                     contact: {
                         address: item.StreetFR ? `${item.StreetFR} ${item.HouseNumber || ''} ${item.Zipcode || ''} ${item.MunicipalityFR || ''}` : "",
+                        StreetFR: item.StreetFR || '',
+                        Zipcode: item.Zipcode || '',                        
                         phone: item.Tel || '',
                         email: item.Email || '',
                         TypeOfAddress: item.TypeOfAddress || '',
@@ -73,7 +75,7 @@ const convertToJSON = async () => {
         console.log('Combined data processed.');
 
         console.log('Adding activity data...');
-        const activityData = await readCsvWithLimit(activityPath, 100000); // No limit needed here
+        const activityData = await readCsvWithLimit(activityPath, 1000000); // No limit needed here
         activityData.forEach(item => {
             const enterpriseNumber = item.EntityNumber;
             if (jsonData[enterpriseNumber]) {
