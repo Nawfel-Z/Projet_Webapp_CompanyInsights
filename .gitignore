@@ -26,4 +26,5 @@ yarn-error.log*
 #data
 /backend/convertedData
 /backend/files
+/src/data/data.json
 
