@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 const app = express();
 const port = 3000;
@@ -8,10 +8,8 @@ const port = 3000;
 app.use(bodyParser.json());
 
 app.post('/predict', (req, res) => {
-    // Récupérer les données d'entrée de la requête
     const inputData = req.body.input;
     
-    // S'assurer que toutes les caractéristiques sont fournies
     const requiredFields = ['ActivityGroup', 'NaceVersion', 'NaceCode', 'JuridicalSituation', 'TypeOfEnterprise'];
     const missingFields = requiredFields.filter(field => !(field in inputData));
 
@@ -29,18 +27,34 @@ app.post('/predict', (req, res) => {
 
     const inputStr = JSON.stringify(inputArray);
 
-    exec(`python3 predict.py '${inputStr}'`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Erreur : ${error.message}`);
-            return res.status(500).send(error.message);
+    // Log the input string for debugging
+    console.log(`Input string sent to Python: ${inputStr}`);
+
+    const pythonProcess = spawn('python3', ['predict.py', inputStr]);
+
+    let dataBuffer = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+        dataBuffer += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`Erreur Python : ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`Processus Python terminé avec le code ${code}`);
+            return res.status(500).send(`Processus Python terminé avec le code ${code}`);
         }
-        if (stderr) {
-            console.error(`Erreur standard : ${stderr}`);
-            return res.status(500).send(stderr);
+
+        try {
+            const prediction = JSON.parse(dataBuffer);
+            res.json({ prediction });
+        } catch (err) {
+            console.error('Erreur de parsing JSON :', err);
+            res.status(500).send('Erreur de parsing JSON');
         }
-        console.log(`Prédiction : ${stdout}`);
-        const prediction = JSON.parse(stdout);
-        res.json({ prediction });
     });
 });
 
