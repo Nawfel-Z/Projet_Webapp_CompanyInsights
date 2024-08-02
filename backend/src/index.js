@@ -1,17 +1,13 @@
-// index.js
 const express = require('express');
+const bodyParser = require('body-parser');
+const routes = require('./routes'); // Assurez-vous que le chemin est correct
+
 const app = express();
 const port = 3000;
 
-const connectDB = require('./config');
-
-connectDB();
-
-app.use(express.json());
-
-const routes = require('./routes');
-app.use('/api', routes);
+app.use(bodyParser.json());
+app.use('/', routes);
 
 app.listen(port, () => {
-  console.log(`Serveur écoutant sur http://localhost:${port}`);
+  console.log(`Serveur en cours d'exécution sur http://localhost:${port}`);
 });
