@@ -1,7 +1,6 @@
 const { MongoClient } = require('mongodb');
 const csvtojson = require('csvtojson');
 const fs = require('fs');
-const path = require('path');
 
 // URI de connexion à MongoDB locale (IPv4 localhost)
 const uri = 'mongodb://127.0.0.1:27017';
@@ -14,11 +13,10 @@ async function importCSV() {
     console.log('Connected to MongoDB');
 
     const database = client.db('WEBAPP'); // Remplacez par le nom de votre base de données
-    const collection = database.collection('entreprise'); // Remplacez par le nom de votre collection
+    const collection = database.collection('establishment'); // Remplacez par le nom de votre collection
 
     // Chemin vers votre fichier CSV
-    const basePath = path.join(__dirname, '..', 'convertedData');
-    const csvFilePath = path.join(basePath, 'data.csv');
+    const csvFilePath = '../files/establishment.csv'; // Remplacez par le chemin de votre fichier CSV
 
     if (!fs.existsSync(csvFilePath)) {
       console.error('CSV file not found:', csvFilePath);

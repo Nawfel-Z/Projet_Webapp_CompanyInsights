@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Card, Row, Col, Typography, Button, Divider } from 'antd';
+import { useLocation } from 'react-router-dom';
 
 const { Content, Footer } = Layout;
 const { Text, Title } = Typography;
@@ -8,16 +9,44 @@ const CompanyDetail = () => {
   const [company, setCompany] = useState(null);
   const [siren, setSiren] = useState('');
 
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const EntrepriseNumber = queryParams.get('searchItem');
+
+  console.log("get item",EntrepriseNumber);
+
+  const searchType = queryParams.get('searchType');
+  const searchValue = queryParams.get('searchValue');
+
+  console.log("search type",searchType);
+  console.log("searchValue",searchValue);
+
+
+
   useEffect(() => {
-    fetch(`data/siren/${EntrepriseNumber}`)
-      .then(response => response.json())
-      .then(data => {
-        const companyData = data["0200.065.765"]; // Replace with the appropriate key
-        setCompany(companyData);
-        setSiren("0200.065.765"); // Replace with the appropriate SIREN
-      })
-      .catch(error => console.error('Error fetching company data:', error));
-  }, []);
+    const fetchData = async () => {
+      try {
+        let response;
+        if (searchType === "companyNumber") {
+          response = await fetch(`http://localhost:3000/data/siren/${searchValue}`);
+        } else if (searchType === "companyName") {
+          response = await fetch(`http://localhost:3000/data/name/${searchValue}`);
+        }
+        else{
+          response = await fetch(`http://localhost:3000/data/siren/${EntrepriseNumber}`);
+        }
+        const data = await response.json();
+        setCompany(data);        
+        console.log("company", data);
+      } catch (error) {
+        console.error('Error fetching company data:', error);
+        console.log(error.messag);
+      }
+    };
+
+    fetchData();
+  }, [searchValue, searchType]);
 
   if (!company) {
     return <div>Loading...</div>;
@@ -32,15 +61,19 @@ const CompanyDetail = () => {
             <Col span={24}>
               <Card>
                 <Row justify="space-between">
-                  <Col>
-                    <Title level={2}>{company.name}</Title>
-                    <Text>SIREN: {siren} - {company.status}</Text><br />
-                    <Text>Adresse: {company.contact.address}, {company.contact.StreetFR}, {company.contact.Zipcode} {company.contact.MunicipalityFR}</Text><br />
-                    <Text>Activité: {company.description}</Text><br />
-                    <Text>Effectif: {company.TypeOfEnterprise}</Text><br />
-                    <Text>Création: {company.start_date}</Text><br />
-                    <Text>Dirigeants: {company.JuridicalSituation}</Text>
-                  </Col>
+                {
+  company && (
+    <Col>
+      <Title level={2}>{company.Denomination}</Title>
+      <Text>SIREN: {company.EnterpriseNumber} - {company.Status}</Text><br />
+      <Text>Adresse: {company.StreetFR}, {company.Zipcode} {company.MunicipalityFR}</Text><br />
+      <Text>Activité: {company.ActivityGroup}</Text><br />
+      <Text>Type de l'entreprise: {company.TypeOfEnterprise}</Text><br />
+      <Text>Création: {company.StartDate}</Text><br />
+      <Text>Situation Juridical: {company.JuridicalSituation}</Text>
+    </Col>
+  )
+}
                   <Col>
                     <Button type="primary" style={{ marginBottom: '10px' }} block>Suivre cette entreprise</Button>
                     <Button block style={{ marginBottom: '10px' }}>Voir les statuts</Button>

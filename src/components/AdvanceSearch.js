@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AdvancedSearch = () => {
   const [searchType, setSearchType] = useState('');
   const [searchValue, setSearchValue] = useState('');
 
+  const navigate = useNavigate()
   const handleSearch = () => {
-    // Implement search logic here
-    console.log(`Searching for ${searchValue} by ${searchType}`);
+    navigate(`/company?searchValue=${searchValue}&searchType=${searchType}`);
   };
+
+
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setSearchValue(newValue);
+  };
+
 
   return (
     <div>
@@ -22,7 +30,7 @@ const AdvancedSearch = () => {
       <input 
         type="text" 
         value={searchValue} 
-        onChange={(e) => setSearchValue(e.target.value)} 
+        onChange={handleInputChange} 
         placeholder="Enter search value"
       />
       <button onClick={handleSearch}>Search</button>

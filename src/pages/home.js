@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, Breadcrumb, Divider, Input, Typography, Space } from 'antd';
 import 'antd/dist/reset.css';
+import { useNavigate } from 'react-router-dom';
 
 const { Content, Footer } = Layout;
 const { Title, Text, Link } = Typography;
 
 function Home() {
+
+    const [searchItem, setSearchItem] = useState("")
+
+    const navigate = useNavigate()
+    
+    
+    const handleInputChange = (e) => {
+        const newValue = e.target.value;
+        setSearchItem(newValue);
+      };
+    
+      console.log("item",searchItem);
+
+
+      const handleSearch = () => {
+        navigate(`/company?searchItem=${searchItem}`);
+      };
+    
+
     return (
         <Layout className="layout">
             <Content style={{ padding: '0 10px' }}>
@@ -23,8 +43,11 @@ function Home() {
                         <Input.Search
                             placeholder="Entreprise, N° SIREN"
                             enterButton="Rechercher"
+                            function of button rechercher
                             size="large"
-                            onSearch={(value) => console.log(value)}
+                            value={searchItem}
+                            onSearch={handleSearch}
+                            onChange={handleInputChange}
                             style={{ width: '500px' }}
                         />
                         <Link href="/AdvancedSearch" style={{ textAlign: 'center', display: 'block' }}>
