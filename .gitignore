@@ -36,3 +36,5 @@ yarn-error.log*
 backend/Scripts
 *.pkl
 >>>>>>> origin/Scripts
+backend/package.json
+backend/package-lock.json
